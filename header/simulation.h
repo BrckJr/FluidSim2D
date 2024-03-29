@@ -1,5 +1,5 @@
 #include<vector>
-
+#include<iostream>
 #include "./logic.h"
 
 class Simulation {
@@ -9,9 +9,6 @@ class Simulation {
 		
 		// Creates the logic behind the animation
 		Logic logic;
-
-		// Creates option for color selection with keystroke 'c' during runtime
-		Options options;
 	
 	public:
 		// Constructor for initialization of window, container, options 

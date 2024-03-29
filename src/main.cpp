@@ -1,7 +1,7 @@
 #include <iostream>
 #include "../header/simulation.h"
 
-// Starts and runs simulation
+// Start and run simulation
 int main() {
 	Simulation sim;
 	sim.run();
