@@ -6,6 +6,7 @@
 #include "./physics.h"
 #include "./const.h"
 #include "./options.h"
+#include <array>
 
 // This class makes the computation of the fluid behaviour
 class Logic {
@@ -16,22 +17,29 @@ private:
 	// Size attribute which defines the number of grid elements in each direction (x and y are both equal)
 	int _size;
 
+	// Time step
 	float _dt;
 
+	// Diffusion coefficient
 	float _diff;
 	
 	// Viscosity attribute
 	float _viscosity;
-	
-	float _px[SIZE*SIZE];
-	float _py[SIZE*SIZE];
 
-	float _x[SIZE*SIZE];
-	float _y[SIZE*SIZE];
+	// Velocity in x and y
+	std::array<float, SIZE*SIZE> _velocity_x;
+	std::array<float, SIZE*SIZE> _velocity_y;
 
-	float _previousDensity[SIZE*SIZE];
-	float _density[SIZE*SIZE];
+	// Change of velocity in x and y direction
+	std::array<float, SIZE*SIZE> _d_velocity_x;
+	std::array<float, SIZE*SIZE> _d_velocity_y;
+
+	// Density and previous density at a given spot
+	std::array<float, SIZE*SIZE> _previousDensity;
+	// float _density[SIZE*SIZE];
+	std::array<float, SIZE*SIZE> _density;
 	
+	// Original Method
 	void InitArr(float arr[], int size);
 	float MapToRange(float value, float minIn, float maxIn, float minOut, float maxOut);
 public:

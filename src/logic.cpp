@@ -1,5 +1,5 @@
 #include "../header/logic.h"
-#include<iostream>
+#include <iostream>
 
 // Helper-Function:
 // Get as input x and y coordinates and checks if the coordinates are outside of the window
@@ -21,45 +21,39 @@ Logic::Logic(float dt, float diff, float visc) {
 	// Set viscosity of fluid
 	_viscosity = visc;
 
-	
-	InitArr(_px, SIZE*SIZE);
-	InitArr(_py, SIZE*SIZE);
-	InitArr(_x, SIZE*SIZE);
-	InitArr(_y, SIZE*SIZE);
-	InitArr(_previousDensity, SIZE*SIZE);
-	InitArr(_density, SIZE*SIZE);
-}
-
-void Logic::InitArr(float arr[], int size) {
-	for (int i = 0; i < size; i++) {
-		arr[i] = 0;	
-	}
+	// Setting the initial values of the arrays to zero
+	std::fill(_velocity_x.begin(), _velocity_x.end(), 0);
+	std::fill(_velocity_y.begin(), _velocity_y.end(), 0);
+	std::fill(_d_velocity_x.begin(), _d_velocity_x.end(), 0);
+	std::fill(_d_velocity_y.begin(), _d_velocity_y.end(), 0);
+	std::fill(_previousDensity.begin(), _previousDensity.end(), 0);
+	std::fill(_density.begin(), _density.end(), 0);
 }
 
 void Logic::AddDensity(float x, float y, float amount) {
-	_density[check_bounds(x,y,_size)] += amount;
+	_density.at(check_bounds(x,y,_size)) += amount;
 }
 
 void Logic::AddVelocity(float x, float y, float px, float py) {
 	int index = check_bounds(x,y,_size);
 
-	_x[index] += px;
-	_y[index] += py;
+	_velocity_x.at(index) += px;
+	_velocity_y.at(index) += py;
 }
 
 void Logic::Step() {
-	_physics.Diffuse(1, _px, _x, _viscosity, _dt, 16, _size);	
-	_physics.Diffuse(2, _py, _y, _viscosity, _dt, 16, _size);	
+	_physics.Diffuse(1, _d_velocity_x, _velocity_x, _viscosity, _dt, 16, _size);	
+	_physics.Diffuse(2, _d_velocity_y, _velocity_y, _viscosity, _dt, 16, _size);	
 
-	_physics.Project(_px, _py, _x, _y, 16, _size);
+	_physics.Project(_d_velocity_x, _d_velocity_y, _velocity_x, _velocity_y, 16, _size);
 	
-	_physics.Advect(1, _x, _px, _px, _py, _dt, _size);
-	_physics.Advect(2, _y, _py, _px, _py, _dt, _size);
+	_physics.Advect(1, _velocity_x, _d_velocity_x, _d_velocity_x, _d_velocity_y, _dt, _size);
+	_physics.Advect(2, _velocity_y, _d_velocity_y, _d_velocity_x, _d_velocity_y, _dt, _size);
 
-	_physics.Project(_x, _y, _px, _py, 16, _size);
+	_physics.Project(_velocity_x, _velocity_y, _d_velocity_x, _d_velocity_y, 16, _size);
 
 	_physics.Diffuse(0, _previousDensity, _density, _diff, _dt, 16, _size);	
-	_physics.Advect(0, _density, _previousDensity, _x, _y, _dt, _size);
+	_physics.Advect(0, _density, _previousDensity, _velocity_x, _velocity_y, _dt, _size);
 }
 
 sf::Color Logic::Hsv(int hue, float sat, float val, float d) {
@@ -106,14 +100,14 @@ void Logic::Render(sf::RenderWindow& win, Color color) {
 			
 			switch (color) {
 				case Color::Default:
-					rect.setFillColor(sf::Color(255, 255, 255, (_density[check_bounds(i,j,_size)] > 255) ? 255 : _density[check_bounds(i,j,_size)]));
+					rect.setFillColor(sf::Color(255, 255, 255, (_density.at(check_bounds(i,j,_size)) > 255) ? 255 : _density.at(check_bounds(i,j,_size))));
 					break;
 				case Color::Hsb:
-					rect.setFillColor(Hsv((_density[check_bounds(i,j,_size)]), 1, 1, 255));
+					rect.setFillColor(Hsv((_density.at(check_bounds(i,j,_size))), 1, 1, 255));
 					break;
 				case Color::Velocity: {
-						int r = (int)MapToRange(_x[check_bounds(i,j,_size)], -0.05f, 0.05f, 0, 255);
-						int g = (int)MapToRange(_y[check_bounds(i,j,_size)], -0.05f, 0.05f, 0, 255);
+						int r = (int)MapToRange(_velocity_x.at(check_bounds(i,j,_size)), -0.05f, 0.05f, 0, 255);
+						int g = (int)MapToRange(_velocity_y.at(check_bounds(i,j,_size)), -0.05f, 0.05f, 0, 255);
 						rect.setFillColor(sf::Color(r, g, 255));
 						break;
 					}
@@ -128,7 +122,8 @@ void Logic::Render(sf::RenderWindow& win, Color color) {
 
 void Logic::FadeDensity(int size) {
 	for (int i = 0; i < size; i++) {
-		float d = _density[i];
-		_density[i] = (d - 0.05f < 0) ? 0 : d - 0.05f; 
+		float d = _density.at(i);
+		_density.at(i) = (d - 0.05f < 0) ? 0 : d - 0.05f; 
+		std::cout << _density.at(i) << '\n';
 	}	
 }

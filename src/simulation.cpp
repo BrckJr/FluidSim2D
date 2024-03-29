@@ -3,7 +3,7 @@
 
 // Creating a window where we run the simulation
 // Logic(_dt, _diff, _viscosity)
-Simulation::Simulation() : options(Options()), logic(Logic(0.1f, 0.00005f, 0.0005f)) {
+Simulation::Simulation() : options(Options()), logic(Logic(0.1f, 0.0f, 0.0005f)) {
 	window.create(sf::VideoMode(SIZE*SCALE, SIZE*SCALE), "Euler fluid simulation", sf::Style::Titlebar | sf::Style::Close);
 }
 
