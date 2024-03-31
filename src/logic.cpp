@@ -6,7 +6,6 @@
 // N is the max size, i.e. here SIZE*SIZE
 int check_bounds(int x, int y, int N);
 
-
 Logic::Logic(float dt, float diff, float visc) {
 	// Get size from global variable SIZE to set correct array sizes
 	_size = SIZE;
