@@ -57,35 +57,44 @@ void Physics::linSolve(int b, std::array<float, SIZE*SIZE>& x, std::array<float,
 	}
 }
 
-
+// Solve the diffusion process.
+// Diffusion is the random movement of particles in the smoke
+// The PDE is solved via the second order finite difference method
+// a is the coefficient for x[i,j] in the discretization scheme
 void Physics::diffuse(int b, std::array<float, SIZE*SIZE>& x, std::array<float, SIZE*SIZE>& x0, float diff, float dt, int iter, int N) {
 	float a = dt * diff * (N - 2) * (N - 2);
 	linSolve(b, x, x0, a, 1 + 6 * a, iter, N);	
 }
 
 void Physics::project(std::array<float, SIZE*SIZE>& vx, std::array<float, SIZE*SIZE>& vy, std::array<float, SIZE*SIZE>& p, std::array<float, SIZE*SIZE>& div, int iter, int N) {
-for (int j = 1; j < N - 1; j++) {
-            	for (int i = 1; i < N - 1; i++) {
-                	div[check_bounds(i, j, N)] = -0.5f*(
-                         	 vx[check_bounds(i+1, j, N)]
-	                        -vx[check_bounds(i-1, j, N)]
-	                	+vy[check_bounds(i, j+1, N)]
-                        	-vy[check_bounds(i, j-1, N)]
-                    	)/N;
-                	p[check_bounds(i, j, N)] = 0;
-            	}
-        }
+	// Get the divergence via stencil matrix
+	for (int j = 1; j < N - 1; j++) {
+		for (int i = 1; i < N - 1; i++) {
+			div[check_bounds(i, j, N)] = -0.5f*(
+					vx[check_bounds(i+1, j, N)]
+					-vx[check_bounds(i-1, j, N)]
+					+vy[check_bounds(i, j+1, N)]
+					-vy[check_bounds(i, j-1, N)]
+				)/N;
+			p[check_bounds(i, j, N)] = 0;
+		}
+	}
 
+	// Set boundary condition for divergence
 	setBnd(0, div, N); 
+	// Set boundary condition for pressure
 	setBnd(0, p, N);
+	// Solve the PDE for the pressure distribution
 	linSolve(0, p, div, 1, 6, iter, N);
     
+	// Use the calculated results from the linSolve to get the velovities in x and y
 	for (int j = 1; j < N - 1; j++) {
 		for (int i = 1; i < N - 1; i++) {
 			vx[check_bounds(i, j, N)] -= 0.5f * (p[check_bounds(i+1, j, N)] - p[check_bounds(i-1, j, N)]) * N;
 			vy[check_bounds(i, j, N)] -= 0.5f * (p[check_bounds(i, j+1, N)] -p[check_bounds(i, j-1, N)]) * N;
 		}
         }
+		// Set boundary conditions for the velocity in x and y
     	setBnd(1, vx, N);
     	setBnd(2, vy, N);
 }

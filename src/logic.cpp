@@ -58,7 +58,7 @@ void Logic::step() {
 	_physics.advect(0, _density, _previousDensity, _velocity_x, _velocity_y, _dt, _size);
 }
 
-// Refreshe the image displayed during simulation
+// Refresh the image displayed during simulation
 void Logic::render(sf::RenderWindow& win) {
 	win.clear();
 	for (int i = 0; i < _size; i++) {
