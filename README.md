@@ -3,7 +3,7 @@ Simulation of a 2D Fluid based on the work of Jos Stam and his paper "Real Time 
 
 The main physical behaviour implemented in this code is the Navier Stokes equation
 
-$/frac{\delta u}{\delta t} = - (u \cdot \nabla) u + \nu \nabla^2 u + f$
+$\frac{\partial u}{\partial t} = - (u \cdot \nabla) u + \nu \nabla^2 u + f$
 
 and the quation for smoke density
-$\frac{\delta \roh}{\delta t} = - (u \cdot \nabla) \roh + \kappa \nabla^2 \roh + S$
+$\frac{\partial \rho}{\partial t} = - (u \cdot \nabla) \rho + \kappa \nabla^2 \rho + S$
