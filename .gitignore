@@ -1,0 +1,14 @@
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
+
+# Ignore object files
+obj
+
+# Ignore TO-DO.txt
+TO-DO's.txt

@@ -10,6 +10,7 @@
 // This class makes the computation of the fluid behaviour
 class Logic {
 	private:
+		
 		// Creating a physics attribute to get the correct physical behaviour
 		Physics _physics;
 
@@ -20,7 +21,7 @@ class Logic {
 		float _dt;
 
 		// Diffusion coefficient
-		float _diff;
+		float _diffusion_coefficient;
 		
 		// Viscosity attribute
 		float _viscosity;
@@ -30,12 +31,11 @@ class Logic {
 		std::array<float, SIZE*SIZE> _velocity_y;
 
 		// Change of velocity in x and y direction
-		std::array<float, SIZE*SIZE> _d_velocity_x;
-		std::array<float, SIZE*SIZE> _d_velocity_y;
+		std::array<float, SIZE*SIZE> _previous_velocity_x;
+		std::array<float, SIZE*SIZE> _previous_velocity_y;
 
 		// Density and previous density at a given spot
-		std::array<float, SIZE*SIZE> _previousDensity;
-		// float _density[SIZE*SIZE];
+		std::array<float, SIZE*SIZE> _previous_density;
 		std::array<float, SIZE*SIZE> _density;
 			
 	public:

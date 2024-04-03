@@ -1,6 +1,0 @@
-- Understand the code and comment respectively (OPEN)
-- Change the definition of the dimensions to a more intuitive solution (OPEN)
-- Change all arrays to std::arrays (DONE)
-- Deletion of color versions (DONE)
-- Change naming of methods and member variables to correct convention (DONE)
-- Check all methods and member variables and set as const if possible (OPEN)
