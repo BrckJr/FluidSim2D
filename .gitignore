@@ -7,8 +7,6 @@
 # Unignore all dirs
 !*/
 
-# Ignore object files
-obj
-
-# Ignore TO-DO.txt
-TO-DO's.txt
+# Ignore object dir and .vscode dir
+obj/
+.vscode/*
