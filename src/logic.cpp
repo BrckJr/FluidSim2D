@@ -69,6 +69,15 @@ void Logic::step() {
 
 // Refresh the image displayed during simulation
 void Logic::render(sf::RenderWindow& win) {
+	// Create a rectangle shape for the block where no smoke can pass with a white frame
+    sf::RectangleShape square(sf::Vector2f(SCALE*BLOCK_WIDTH, SCALE*BLOCK_HEIGHT));
+    square.setPosition(SCALE*(SIZE - BLOCK_WIDTH)/2 - SCALE*0.05, SCALE*(SIZE - BLOCK_HEIGHT)/2 - SCALE*0.05);
+    square.setFillColor(sf::Color(192, 192, 192));
+    square.setOutlineThickness(2.f);
+    square.setOutlineColor(sf::Color::White);
+	
+
+
 	win.clear();
 	for (int i = 0; i < _size; i++) {
 		for(int j = 0; j < _size; j++) {
@@ -77,9 +86,11 @@ void Logic::render(sf::RenderWindow& win) {
 			rect.setPosition(j * SCALE, i * SCALE);
 			rect.setFillColor(sf::Color(0, 255, 0, (_density[transform_coordinates(i,j,_size)] > 255) ? 255 : _density[transform_coordinates(i,j,_size)]));
 			win.draw(rect);
+			win.draw(square);
 		}
 	}
 }
+
 
 // Let's the density fade over time so to not fill the complete image
 // UNPHYSICAL BEHAVIOR!!

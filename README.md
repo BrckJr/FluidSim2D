@@ -6,4 +6,5 @@ The main physical behaviour implemented in this code is the Navier Stokes equati
 $\frac{\partial u}{\partial t} = - (u \cdot \nabla) u + \nu \nabla^2 u + f$
 
 and the quation for smoke density
-$\frac{\partial \rho}{\partial t} = - (u \cdot \nabla) \rho + \kappa \nabla^2 \rho + S$
+
+$\frac{\partial \rho}{\partial t} = - (u \cdot \nabla) \rho + \kappa \nabla^2 \rho + S$.

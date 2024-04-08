@@ -8,7 +8,7 @@ class Physics {
 private:
 	// Ensure that no smoke can exist the simulation box. 
 	// Set horizontal density to zero on vertical walls, analog on horizontal walls
-	void setBnd(int b, std::array<float, SIZE*SIZE>& x, int N);
+	void setBnd(int b, std::array<float, SIZE*SIZE>& x, int N, bool block_present);
 public:
 	// Viscous diffusion of the velocity field in x and y direction according to the Navier Stokes PDE
 	void diffuse_velocity(int b, std::array<float, SIZE*SIZE>& x, std::array<float, SIZE*SIZE>& x0, float diff, float dt, int iter, int N);

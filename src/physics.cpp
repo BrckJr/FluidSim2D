@@ -7,34 +7,43 @@ int transform_coordinates(int x, int y, int N);
 
 // Ensure that no smoke can exist the simulation box. 
 // Set horizontal density to zero on vertical walls, analog on horizontal walls
-void Physics::setBnd(int b, std::array<float, SIZE*SIZE>& x, int N) {
-        // If b == 2, assign the negative value of the second but last element to the element closest to the boundary 
-		// on top and bottom of the simulation box. This is called in the diffusion / advection for the y-axis.
-		for(int i = 1; i < N - 1; i++) {
-            	x[transform_coordinates(i, 0, N)] = (b == 2 ? -x[transform_coordinates(i, 1, N)] : x[transform_coordinates(i, 1, N)]);
-            	x[transform_coordinates(i, N-1, N)] = (b == 2 ? -x[transform_coordinates(i, N-2, N)] : x[transform_coordinates(i, N-2, N)]);
-        }
+void Physics::setBnd(int b, std::array<float, SIZE*SIZE>& x, int N, bool block_present = true) {
+    // If b == 2, assign the negative value of the second but last element to the element closest to the boundary 
+    // on top and bottom of the simulation box. This is called in the diffusion / advection for the y-axis.
+    for(int i = 1; i < N - 1; i++) {
+        x[transform_coordinates(i, 0, N)] = (b == 2 && !block_present) ? -x[transform_coordinates(i, 1, N)] : x[transform_coordinates(i, 1, N)];
+        x[transform_coordinates(i, N-1, N)] = (b == 2 && !block_present) ? -x[transform_coordinates(i, N-2, N)] : x[transform_coordinates(i, N-2, N)];
+    }
 
-		// If b == 1, assign the negative value of the second but last element to the element closest to the boundary 
-		// on left and right of the simulation box. This is called in the diffusion / advection for the x-axis.
-        for(int j = 1; j < N - 1; j++) {
-            	x[transform_coordinates(0, j, N)] = (b == 1 ? -x[transform_coordinates(1, j, N)] : x[transform_coordinates(1, j, N)]);
-            	x[transform_coordinates(N-1, j, N)] = (b == 1 ? -x[transform_coordinates(N-2, j, N)] : x[transform_coordinates(N-2, j, N)]);
-        }
-    
-		// Assign to the edges the average over itself and its both neighbors
-    	x[transform_coordinates(0, 0, N)] = 0.33f * (x[transform_coordinates(1, 0, N)]
-                                  + x[transform_coordinates(0, 1, N)]
-                                  + x[transform_coordinates(0, 0, N)]);
-    	x[transform_coordinates(0, N-1, N)] = 0.33f * (x[transform_coordinates(1, N-1, N)]
-                                  + x[transform_coordinates(0, N-2, N)]
-                                  + x[transform_coordinates(0, N-1, N)]);
-    	x[transform_coordinates(N-1, 0, N)] = 0.33f * (x[transform_coordinates(N-2, 0, N)]
-                                  + x[transform_coordinates(N-1, 1, N)]
-                                  + x[transform_coordinates(N-1, 0, N)]);
-    	x[transform_coordinates(N-1, N-1, N)] = 0.33f * (x[transform_coordinates(N-2, N-1, N)]
-                                  + x[transform_coordinates(N-1, N-2, N)]
-                                  + x[transform_coordinates(N-1, N-1, N)]);
+    // If b == 1, assign the negative value of the second but last element to the element closest to the boundary 
+    // on left and right of the simulation box. This is called in the diffusion / advection for the x-axis.
+    for(int j = 1; j < N - 1; j++) {
+        x[transform_coordinates(0, j, N)] = (b == 1 && !block_present) ? -x[transform_coordinates(1, j, N)] : x[transform_coordinates(1, j, N)];
+        x[transform_coordinates(N-1, j, N)] = (b == 1 && !block_present) ? -x[transform_coordinates(N-2, j, N)] : x[transform_coordinates(N-2, j, N)];
+    }
+
+    // Set boundary values to 0 if a block is present in the middle of the window
+    if (block_present) {
+        for (int i = - BLOCK_HEIGHT/2; i < BLOCK_HEIGHT/2; i++){
+			for (int j = - BLOCK_WIDTH/2; j < BLOCK_WIDTH/2; j++){
+				x[transform_coordinates(N/2 + i, N/2 + j, N)] = 0;
+			}
+		}
+    }
+
+    // Assign to the edges the average over itself and its both neighbors
+    x[transform_coordinates(0, 0, N)] = 0.33f * (x[transform_coordinates(1, 0, N)]
+                              + x[transform_coordinates(0, 1, N)]
+                              + x[transform_coordinates(0, 0, N)]);
+    x[transform_coordinates(0, N-1, N)] = 0.33f * (x[transform_coordinates(1, N-1, N)]
+                              + x[transform_coordinates(0, N-2, N)]
+                              + x[transform_coordinates(0, N-1, N)]);
+    x[transform_coordinates(N-1, 0, N)] = 0.33f * (x[transform_coordinates(N-2, 0, N)]
+                              + x[transform_coordinates(N-1, 1, N)]
+                              + x[transform_coordinates(N-1, 0, N)]);
+    x[transform_coordinates(N-1, N-1, N)] = 0.33f * (x[transform_coordinates(N-2, N-1, N)]
+                              + x[transform_coordinates(N-1, N-2, N)]
+                              + x[transform_coordinates(N-1, N-1, N)]);
 }
 
 // Viscous diffusion of the velocity field in x and y direction according to the Navier Stokes PDE
